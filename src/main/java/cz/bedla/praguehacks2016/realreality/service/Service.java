@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.opengis.feature.simple.SimpleFeature;
 import org.springframework.stereotype.Component;
 
+import com.google.common.primitives.Doubles;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
@@ -82,6 +83,27 @@ public class Service {
             put("value", noiseFeature != null ? numInt(noiseFeature.getAttribute("GRIDVALUE")) : null);
             put("id", noiseFeature != null ? noiseFeature.getAttribute("my_id") : null);
         }};
+    }
+
+
+    public Map<String, Object> prices(double lon, double lat) {
+        final Point center = createPoint(lon, lat);
+
+        final SimpleFeature priceFeature = db.getPrices().parallelStream()
+                .filter((f) -> center.intersects(geometry(f)))
+                .findFirst()
+                .orElse(null);
+
+        return new HashMap<String, Object>() {{
+            put("value", priceFeature != null ? findPrice(priceFeature.getAttribute("CENA")) : null);
+            put("id", priceFeature != null ? priceFeature.getAttribute("my_id") : null);
+        }};
+    }
+
+    private Double findPrice(Object price) {
+        return "N".equals(price) ?
+                null :
+                Doubles.tryParse(String.valueOf(price));
     }
 
     private Double numDouble(Object obj) {

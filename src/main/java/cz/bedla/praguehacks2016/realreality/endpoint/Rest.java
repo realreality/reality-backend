@@ -38,7 +38,14 @@ public class Rest {
     @GET
     @Path("/atmosphere")
     @Produces("application/json")
-    public Map<String, Object> noiseDay(@QueryParam("lon") double lon, @QueryParam("lat") double lat) {
+    public Map<String, Object> atmosphere(@QueryParam("lon") double lon, @QueryParam("lat") double lat) {
         return service.atmosphere(lon, lat);
+    }
+
+    @GET
+    @Path("/prices")
+    @Produces("application/json")
+    public Map<String, Object> prices(@QueryParam("lon") double lon, @QueryParam("lat") double lat) {
+        return service.prices(lon, lat);
     }
 }

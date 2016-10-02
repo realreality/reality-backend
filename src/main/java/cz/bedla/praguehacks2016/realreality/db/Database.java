@@ -31,6 +31,7 @@ public class Database {
     private List<SimpleFeature> noiseDay;
     private List<SimpleFeature> noiseNight;
     private List<SimpleFeature> atmosphere;
+    private List<SimpleFeature> prices;
 
     @PostConstruct
     private void loadData() throws IOException {
@@ -38,11 +39,13 @@ public class Database {
         noiseDay = new LinkedList<>();
         noiseNight = new LinkedList<>();
         atmosphere = new LinkedList<>();
+        prices = new LinkedList<>();
 
         loadShpZones();
         loadShpNoiseDay();
         loadShpNoiseNight();
         loadShpAtmosphere();
+        loadShpPrices();
     }
 
     private void loadShpZones() throws IOException {
@@ -69,6 +72,12 @@ public class Database {
                 "--- ATMOSPHERE start load", "--- ATMOSPHERE loaded at ");
     }
 
+    private void loadShpPrices() throws IOException {
+        loadShp(prices, (f) -> true,
+                dirShp, "SED_CenovaMapa_p-mercator.shp",
+                "--- PRICES start load", "--- PRICES loaded at ");
+    }
+
     public List<SimpleFeature> getZones() {
         return zones;
     }
@@ -83,6 +92,10 @@ public class Database {
 
     public List<SimpleFeature> getAtmosphere() {
         return atmosphere;
+    }
+
+    public List<SimpleFeature> getPrices() {
+        return prices;
     }
 
     private static void loadShp(List<SimpleFeature> list,
