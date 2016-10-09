@@ -19,7 +19,7 @@ You need data files:
 5. At "Layer panel" right click on particular Layer and select "Save as..."
 6. Browse for "Save as" file input box. Select CRS "EPSG:3857 - WGS 84 / Pseudo Mercator" and click Ok
 7. New converted layer will be added to "Layer panel"
-8. Right click on new layer at "Layyer panel" and select "Edit attributes table"
+8. Right click on new layer at "Layer panel" and select "Edit attributes table"
 9. Click on "Toggle editing mode" button (first) and than click "Open field calculator" button
 10. Keep "Create new field" checked, set "Output field name" to value "my_id", set "Output field type" to integer, and set "Expression" to value "$id+1"
 11. Press Ok and click on "Toggle editing mode" button. You will be promted to save data. Answer yes :]
