@@ -32,6 +32,7 @@ public class Database {
     private List<SimpleFeature> noiseNight;
     private List<SimpleFeature> atmosphere;
     private List<SimpleFeature> prices;
+    private List<SimpleFeature> flood;
 
     @PostConstruct
     private void loadData() throws IOException {
@@ -40,12 +41,14 @@ public class Database {
         noiseNight = new LinkedList<>();
         atmosphere = new LinkedList<>();
         prices = new LinkedList<>();
+        flood = new LinkedList<>();
 
         loadShpZones();
         loadShpNoiseDay();
         loadShpNoiseNight();
         loadShpAtmosphere();
         loadShpPrices();
+        loadShpFlood();
     }
 
     private void loadShpZones() throws IOException {
@@ -78,6 +81,12 @@ public class Database {
                 "--- PRICES start load", "--- PRICES loaded at ");
     }
 
+    private void loadShpFlood() throws IOException {
+        loadShp(flood, (f) -> true,
+                dirShp, "zaplavy-mercator.shp",
+                "--- FLOOD start load", "--- FLOOD loaded at ");
+    }
+
     public List<SimpleFeature> getZones() {
         return zones;
     }
@@ -96,6 +105,10 @@ public class Database {
 
     public List<SimpleFeature> getPrices() {
         return prices;
+    }
+
+    public List<SimpleFeature> getFlood() {
+        return flood;
     }
 
     private static void loadShp(List<SimpleFeature> list,

@@ -48,4 +48,11 @@ public class Rest {
     public Map<String, Object> prices(@QueryParam("lon") double lon, @QueryParam("lat") double lat) {
         return service.prices(lon, lat);
     }
+
+    @GET
+    @Path("/flood")
+    @Produces("application/json")
+    public Map<String, Object> flood(@QueryParam("lon") double lon, @QueryParam("lat") double lat) {
+        return service.flood(lon, lat);
+    }
 }
