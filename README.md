@@ -10,6 +10,10 @@ You need data files:
 * [Stání v zónách placeného stání](http://opendata.praha.eu/dataset?tags=silni%C4%8Dn%C3%AD+doprava&_tags_limit=0)
 * [Hluková mapa automobilové dopravy - noc a den](http://opendata.praha.eu/dataset?tags=hluk&_tags_limit=0)
 * [Cenová mapa Hl. M. Prahy - Plochy](http://www.geoportalpraha.cz/cs/fulltext_geoportal?id=C4FE893C-81B9-4B4A-BDB4-292479C87E2D#.V_DaNI-LRD8)
+* [Záplavové území (Q5)](http://opendata.praha.eu/dataset/ipr-zaplavove_uzemi___q5_)
+* [Záplavové území (Q20)](http://opendata.praha.eu/dataset/ipr-zaplavove_uzemi___q20_)
+* [Záplavové území (Q50)](http://opendata.praha.eu/dataset/ipr-zaplavove_uzemi___q50_)
+* [Záplavové území (Q100)](http://opendata.praha.eu/dataset/ipr-zaplavove_uzemi___q100_)
 
 ## How to prepare data
 1. Download [QGIS](http://www.qgis.org/)
