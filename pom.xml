@@ -23,7 +23,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <version.jts>1.13</version.jts>
-        <version.geotools>14.1</version.geotools>
+        <version.geotools>15.4</version.geotools>
     </properties>
 
     <dependencies>
