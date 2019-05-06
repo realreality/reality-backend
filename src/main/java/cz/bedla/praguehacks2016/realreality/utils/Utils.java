@@ -40,10 +40,6 @@ import com.vividsolutions.jts.linearref.LengthIndexedLine;
 
 public class Utils {
     private static final CRSAuthorityFactory CRS_AUTHORITY_FACTORY = CRS.getAuthorityFactory(true);
-    public static final CoordinateReferenceSystem CRS_MERCATOR = createCoordinateReferenceSystem("EPSG:3857");
-    private static final CoordinateReferenceSystem CRS_WGS84 = createCoordinateReferenceSystem("EPSG:4326");
-    public static final MathTransform TRANSFORM_MERCATOR_TO_WGS84 = findMathTransform(CRS_MERCATOR, CRS_WGS84);
-    public static final MathTransform TRANSFORM_WGS84_TO_MERCATOR = findMathTransform(CRS_WGS84, CRS_MERCATOR);
 
     public static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
@@ -53,14 +49,6 @@ public class Utils {
         } catch (Exception e) {
             throw Utils.sneakyThrow(e);
         }
-    }
-
-    public static double[] transformMercatorToWgs84(double x, double y) {
-        return transform(x, y, TRANSFORM_MERCATOR_TO_WGS84);
-    }
-
-    public static double[] transformWgs84ToMercator(double x, double y) {
-        return transform(x, y, TRANSFORM_WGS84_TO_MERCATOR);
     }
 
     public static double[] transform(double x, double y, MathTransform mathTransform) {
