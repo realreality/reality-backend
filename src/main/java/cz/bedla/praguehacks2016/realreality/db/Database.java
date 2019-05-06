@@ -1,31 +1,29 @@
 package cz.bedla.praguehacks2016.realreality.db;
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Stopwatch;
+
 import org.geotools.data.FileDataStore;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.opengis.feature.simple.SimpleFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Stopwatch;
-
-import cz.bedla.praguehacks2016.realreality.geotools.GeoToolsFeatureCollectionSupport;
 import cz.bedla.praguehacks2016.realreality.utils.GeoUtils;
 
 @Component
 public class Database {
-    private static final Logger LOG = LoggerFactory.getLogger(Database.class);
 
-    @Value("${dir.shp}")
-    private String dirShp;
+    private static final Logger LOG = LoggerFactory.getLogger(Database.class);
 
     private List<SimpleFeature> zones;
     private List<SimpleFeature> noiseDay;
@@ -36,55 +34,40 @@ public class Database {
 
     @PostConstruct
     private void loadData() throws IOException {
-        zones = new LinkedList<>();
-        noiseDay = new LinkedList<>();
-        noiseNight = new LinkedList<>();
-        atmosphere = new LinkedList<>();
-        prices = new LinkedList<>();
-        flood = new LinkedList<>();
-
-        loadShpZones();
-        loadShpNoiseDay();
-        loadShpNoiseNight();
-        loadShpAtmosphere();
-        loadShpPrices();
-        loadShpFlood();
+        noiseNight = loadShpNoiseNight();
+        zones = loadShpZones();
+        noiseDay = loadShpNoiseDay();        
+        atmosphere = loadShpAtmosphere();
+        // prices = loadShpPrices();
+        // flood = loadShpFlood();        
     }
 
-    private void loadShpZones() throws IOException {
-        loadShp(zones, (f) -> true /*!"M".equals(f.getAttribute("ZONA_L"))*/,
-                dirShp, "DOP_ZPS_Stani_l-mercator.shp",
+    private List<SimpleFeature> loadShpZones() {
+        return loadShp((f) -> true /* !"M".equals(f.getAttribute("ZONA_L")) */, "DOP_ZPS_Stani_l.shp",
                 "--- ZONES start load", "--- ZONES loaded at ");
     }
 
-    private void loadShpNoiseDay() throws IOException {
-        loadShp(noiseDay, (f) -> true,
-                dirShp, "HM_Ekola_ADP_pasma_den_p-mercator.shp",
-                "--- NOISE DAY start load", "--- NOISE DAY loaded at ");
+    private List<SimpleFeature> loadShpNoiseDay() {
+        return loadShp((f) -> true, "HM_Ekola_ADP_pasma_den_p.shp", "--- NOISE DAY start load",
+                "--- NOISE DAY loaded at ");
     }
 
-    private void loadShpNoiseNight() throws IOException {
-        loadShp(noiseNight, (f) -> true,
-                dirShp, "HM_Ekola_ADP_pasma_noc_p-mercator.shp",
-                "--- NOISE NIGHT start load", "--- NOISE NIGHT loaded at ");
+    private List<SimpleFeature> loadShpNoiseNight() {
+        return loadShp((f) -> true, "HM_Ekola_ADP_pasma_noc_p.shp", "--- NOISE NIGHT start load",
+                "--- NOISE NIGHT loaded at ");
     }
 
-    private void loadShpAtmosphere() throws IOException {
-        loadShp(atmosphere, (f) -> true,
-                dirShp, "OVZ_Klima_ZnecOvzdusi_p-mercator.shp",
-                "--- ATMOSPHERE start load", "--- ATMOSPHERE loaded at ");
+    private List<SimpleFeature> loadShpAtmosphere() {
+        return loadShp((f) -> true, "OVZ_Klima_ZnecOvzdusi_p.shp", "--- ATMOSPHERE start load",
+                "--- ATMOSPHERE loaded at ");
     }
 
-    private void loadShpPrices() throws IOException {
-        loadShp(prices, (f) -> true,
-                dirShp, "SED_CenovaMapa_p-mercator.shp",
-                "--- PRICES start load", "--- PRICES loaded at ");
+    private List<SimpleFeature> loadShpPrices() {
+        return loadShp((f) -> true, "SED_CenovaMapa_p.shp", "--- PRICES start load", "--- PRICES loaded at ");
     }
 
-    private void loadShpFlood() throws IOException {
-        loadShp(flood, (f) -> true,
-                dirShp, "zaplavy-mercator.shp",
-                "--- FLOOD start load", "--- FLOOD loaded at ");
+    private List<SimpleFeature> loadShpFlood() {
+        return loadShp((f) -> true, "zaplavy.shp", "--- FLOOD start load", "--- FLOOD loaded at ");
     }
 
     public List<SimpleFeature> getZones() {
@@ -111,25 +94,38 @@ public class Database {
         return flood;
     }
 
-    private static void loadShp(List<SimpleFeature> list,
-                                Predicate<SimpleFeature> featureFilter,
-                                String dirShp, String fileName,
-                                String logBegin, String logEnd) throws IOException {
+    private List<SimpleFeature> loadShp(Predicate<SimpleFeature> featureFilter, String fileName, String logBegin, String logEnd) {
         LOG.info(logBegin);
 
         final Stopwatch stopwatch = Stopwatch.createStarted();
 
-        final FileDataStore store = GeoUtils.openDataStore(dirShp, fileName);
-        final SimpleFeatureSource featureSource = store.getFeatureSource();
+        List<SimpleFeature> list = new ArrayList<>();
 
-        new GeoToolsFeatureCollectionSupport(featureSource.getFeatures())
-                .iterateFeatures(feature -> {
+        FileDataStore store = null;
+        try {
+            store = GeoUtils.openDataStore(new ClassPathResource("/esri_shapefiles/" + fileName));
+            final SimpleFeatureSource featureSource = store.getFeatureSource();
+
+            try(SimpleFeatureIterator iterator = featureSource.getFeatures().features()) {
+                while (iterator.hasNext()) {                    
+                    SimpleFeature feature = iterator.next();
                     if (featureFilter.apply(feature)) {
                         list.add(feature);
                     }
-                });
+                }               
+            }                       
+                
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            if (store != null) {
+                store.dispose();
+            }
+        }
 
         LOG.info(logEnd + stopwatch.stop().toString());
+
+        return list;
     }
 
 }

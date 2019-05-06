@@ -3,29 +3,19 @@ Quick and dirty server for serving SHP files data build for Real reality project
 
 Chrome extension front-end is [here](https://github.com/krtek/reality).
 
-Data .shp files has to be converted to [EPSG:3857](http://epsg.io/3857) and column `my_id` (integer increment from 1) has to be added.
+Run it with mvnw spring-boot:run (it's standard [Spring Boot app](https://spring.io/projects/spring-boot))
 
-You need data files:
-* [Bonita klimatu z hlediska znečištění ovzduší](http://opendata.praha.eu/dataset?tags=ovzdu%C5%A1%C3%AD&_tags_limit=0)
-* [Stání v zónách placeného stání](http://opendata.praha.eu/dataset?tags=silni%C4%8Dn%C3%AD+doprava&_tags_limit=0)
-* [Hluková mapa automobilové dopravy - noc a den](http://opendata.praha.eu/dataset?tags=hluk&_tags_limit=0)
-* [Cenová mapa Hl. M. Prahy - Plochy](http://www.geoportalpraha.cz/cs/fulltext_geoportal?id=C4FE893C-81B9-4B4A-BDB4-292479C87E2D#.V_DaNI-LRD8)
+Data sets below are supported. If there is newer version of data (you can see in metadata of given dataset).
+You need to download WSG84 versions of shape files and copy .shp (polygon data), shx (index data) and .dbf (attributes data) files from zip.
+
+Supported data sets:
+* [Bonita klimatu z hlediska znečištění ovzduší](http://opendata.praha.eu/dataset/ipr-bonita_klimatu_z_hlediska_znecisteni_ovzdusi)
+* [Stání v zónách placeného stání](http://opendata.praha.eu/dataset/ipr-stani_v_zonach_placeneho_stani)
+* [Hluková mapa automobilové dopravy - noc](http://opendata.praha.eu/dataset/ipr-hlukova_mapa_automobilove_dopravy_-_noc)
+* [Hluková mapa automobilové dopravy - den](http://opendata.praha.eu/dataset/ipr-hlukova_mapa_automobilove_dopravy_-_den)
 * [Záplavové území (Q5)](http://opendata.praha.eu/dataset/ipr-zaplavove_uzemi___q5_)
 * [Záplavové území (Q20)](http://opendata.praha.eu/dataset/ipr-zaplavove_uzemi___q20_)
 * [Záplavové území (Q50)](http://opendata.praha.eu/dataset/ipr-zaplavove_uzemi___q50_)
 * [Záplavové území (Q100)](http://opendata.praha.eu/dataset/ipr-zaplavove_uzemi___q100_)
 * [Záplavové území (drobné vodní toky)](http://opendata.praha.eu/dataset/ipr-zaplavove_uzemi___drobne_vodni_toky_)
 
-## How to prepare data
-1. Download [QGIS](http://www.qgis.org/)
-2. Open .shp file in QGIS
-3. Click "Add Vector layer"
-4. Source type: File, Click Browse and select .shp file
-5. At "Layer panel" right click on particular Layer and select "Save as..."
-6. Browse for "Save as" file input box. Select CRS "EPSG:3857 - WGS 84 / Pseudo Mercator" and click Ok
-7. New converted layer will be added to "Layer panel"
-8. Right click on new layer at "Layer panel" and select "Edit attributes table"
-9. Click on "Toggle editing mode" button (first) and than click "Open field calculator" button
-10. Keep "Create new field" checked, set "Output field name" to value "my_id", set "Output field type" to integer, and set "Expression" to value "$id+1"
-11. Press Ok and click on "Toggle editing mode" button. You will be promted to save data. Answer yes :]
-12. Now you have new .shp file prepared
